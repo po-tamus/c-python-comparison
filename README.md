@@ -29,7 +29,19 @@ python convertRBG.py -i input_image.jpeg -o output_image.jpeg
 ```c
 void convert_to_YCrCb(unsigned char *rgb_pixels, unsigned char  
 *ycc_pixels, int width, int height) {
-...
+        unsigned char r, g, b;
+        r = rgb_pixels[i];
+        g = rgb_pixels[i+1];
+        b = rgb_pixels[i+2]; 
+
+        char y = (char) round(0.299 * r + 0.587 * g + 0.114 * b);
+        char cb = (char) round(128 - 0.168736 * r - 0.331264 * g + 0.5 * b);
+        char cr = (char) round(128 + 0.5 * r - 0.418688 * g - 0.081312 * b); 
+
+        ycc_pixels[i] = y; 
+        ycc_pixels[i+1] = cb; 
+        ycc_pixels[i+2]=cr;
+
 }
 ```
 ## Troubleshoot
@@ -42,8 +54,16 @@ void convert_to_YCrCb(unsigned char *rgb_pixels, unsigned char
 ```python 
 def convert_RGB_to_YCbCr(rgb_pixels, width, height): 
     ycc_pixels = bytearray(width * height * 3)
-    for i in range(len(ycc_pixels)): 
-        ycc_pixels[i] = rgb_to_ycbcr(rgb_pixels[i])
+
+    for i in range(0, len(ycc_pixels), 3): 
+        r = rgb_pixels[i]
+        g = rgb_pixels[i+1]
+        b = rgb_pixels[i+2]
+        rcc_tuple = rgb_to_ycbcr(r, g, b)
+        
+        ycc_pixels[i] = rcc_tuple[0]
+        ycc_pixels[i+1] = rcc_tuple[1]
+        ycc_pixels[i+2] = rcc_tuple[2]
 
     return ycc_pixels
 ```
